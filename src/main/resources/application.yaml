@@ -1,16 +1,16 @@
 server:
-  port: 8090
+  port: ${SERVER_PORT:8090}
 spring:
   security:
     oauth2:
       client:
         registration:
           elm-client:
-            client-id: elm
-            client-secret: F2OaQYgx21uslMz0pO40XMH7YdG9qFIL
-            authorization-grant-type: authorization_code
-            scope: openid
-            provider: keycloak
+            client-id: ${CLIENT_ID}
+            client-secret: ${CLIENT_SECRET}
+            authorization-grant-type: ${GRANT_TYPE:authorization_code}
+            scope: ${SCOPE:openid}
+            provider: idp
         provider:
-          keycloak:
-            issuer-uri: http://localhost:8080/realms/customers
+          idp:
+            issuer-uri: ${ISSUER_URI}
