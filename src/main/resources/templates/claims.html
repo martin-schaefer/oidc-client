@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Spring Boot OIDC Demo - Login</title>
+    <meta charset="utf-8"/>
+    <style>
+        .styled-table {
+            border-collapse: collapse;
+            margin: 25px 25px;
+            font-size: 0.9em;
+            font-family: sans-serif;
+            min-width: 400px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .styled-table thead tr {
+            background-color: #009879;
+            color: #ffffff;
+            text-align: left;
+        }
+
+        .styled-table th,
+        .styled-table td {
+            padding: 12px 15px;
+        }
+
+        .styled-table tbody tr {
+            border-bottom: 1px solid #dddddd;
+        }
+
+        .styled-table tbody tr:nth-of-type(even) {
+            background-color: #f3f3f3;
+        }
+
+        .styled-title {
+            font-size: 1.2em;
+            font-family: sans-serif;
+            margin-top: 1.6em;
+            margin-left: 25px;
+            margin-bottom: 1.6em;
+        }
+    </style>
+</head>
+<body>
+<h2 class="styled-title"
+    th:text="'You were authenticated as ' + ${preferredUsername} + '. These are your claims in the ID token:'"></h2>
+<table class="styled-table">
+    <tbody>
+    <tr th:each="claim: ${claims}">
+        <td th:text="${claim.key}"/>
+        <td th:id="'claim_' + ${claim.key}" th:text="${claim.value}"/>
+    </tr>
+    </tbody>
+</table>
+<h2 class="styled-title">These are your infos in the user info token:</h2>
+<table class="styled-table">
+    <tbody>
+    <tr th:each="info: ${infos}">
+        <td th:text="${info.key}"/>
+        <td th:id="'info_' + ${info.key}" th:text="${info.value}"/>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>

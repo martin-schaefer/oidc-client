@@ -1,0 +1,16 @@
+server:
+  port: 8090
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          elm-client:
+            client-id: elm
+            client-secret: F2OaQYgx21uslMz0pO40XMH7YdG9qFIL
+            authorization-grant-type: authorization_code
+            scope: openid
+            provider: keycloak
+        provider:
+          keycloak:
+            issuer-uri: http://localhost:8080/realms/customers
