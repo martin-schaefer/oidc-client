@@ -22,8 +22,8 @@ public class OidcRestController {
     public String claims(Model model, @AuthenticationPrincipal OidcUser oidcUser) {
         OidcIdToken idToken = oidcUser.getIdToken();
         model.addAttribute(PREFERRED_USERNAME, idToken.getPreferredUsername());
-        model.addAttribute(CLAIMS, new TreeMap<>(idToken.getClaims()));
-        model.addAttribute(INFOS, new TreeMap<>(oidcUser.getUserInfo().getClaims()));
+        model.addAttribute(CLAIMS, new TreeMap<>(idToken.getClaims()).entrySet().stream().map(KeyValue::of).toList());
+        model.addAttribute(INFOS, new TreeMap<>(oidcUser.getUserInfo().getClaims()).entrySet().stream().map(KeyValue::of).toList());
         return CLAIMS;
     }
 }
