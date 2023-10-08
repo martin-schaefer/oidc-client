@@ -1,5 +1,7 @@
 package ch.martin.oidcclient;
 
+import com.bastiaanjansen.otp.HMACAlgorithm;
+import com.bastiaanjansen.otp.TOTPGenerator;
 import dasniko.testcontainers.keycloak.KeycloakContainer;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +17,8 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
+import java.time.*;
 import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -106,8 +110,36 @@ public class OidcContainerTest {
 
     @SneakyThrows
     @Test
+    @DisplayName("Configure TOTP")
+    @Order(3)
+    void configureTotp() {
+        WebElement link = driver.findElement(By.xpath("//a[(@id='mode-manual')]"));
+        link.click();
+        WebElement secretText = driver.findElement(By.xpath("//span[(@id='kc-totp-secret-key')]"));
+        String secret = secretText.getText().replace(" ","").trim();
+        byte[] bytes = secret.getBytes(StandardCharsets.UTF_8);
+        TOTPGenerator generator = new TOTPGenerator.Builder(bytes)
+                .withHOTPGenerator(builder -> {
+                    builder.withPasswordLength(6);
+                    builder.withAlgorithm(HMACAlgorithm.SHA1); // SHA256 and SHA512 are also supported
+                })
+                .withPeriod(Duration.ofSeconds(30))
+                .build();
+        String totp = generator.now();
+        System.out.println("totp " + totp);
+
+        WebElement totpInput = driver.findElement(By.xpath("//input[(@id='totp')]"));
+        totpInput.sendKeys(totp);
+
+        Thread.sleep(3000);
+        WebElement submit = driver.findElement(By.xpath("//input[(@id='saveTOTPBtn')]"));
+        submit.click();
+    }
+
+    @SneakyThrows
+    @Test
     @DisplayName("Verify ID Token Claims")
-    @Order(2)
+    @Order(4)
     void verifyToken() {
         WebElement email = driver.findElement(By.xpath("//td[@id='claim_email']"));
         WebElement firstName = driver.findElement(By.xpath("//td[@id='claim_given_name']"));
