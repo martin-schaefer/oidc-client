@@ -10,7 +10,7 @@
     </parent>
     <groupId>ch.martin</groupId>
     <artifactId>oidc-client</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.0</version>
     <name>oidc-client</name>
     <description>oidc-client</description>
     <properties>

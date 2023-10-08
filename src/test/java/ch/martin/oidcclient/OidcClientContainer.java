@@ -8,7 +8,7 @@ public class OidcClientContainer extends GenericContainer<OidcClientContainer> {
     public static final int DEFAULT_HTTP_PORT = 8090;
 
     public OidcClientContainer() {
-        super("admiralduck/oidc-client:0.0.1-SNAPSHOT");
+        super("admiralduck/oidc-client:1.0.0");
         withExposedPorts(DEFAULT_HTTP_PORT);
     }
 
