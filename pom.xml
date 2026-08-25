@@ -15,6 +15,12 @@
     <description>oidc-client</description>
     <properties>
         <java.version>17</java.version>
+        <!-- Overridden by CI: -Dimage.tag=<git-tag> -Dimage.publish=true
+             -Ddocker.publish.username=... -Ddocker.publish.password=... -->
+        <image.tag>${project.version}</image.tag>
+        <image.publish>false</image.publish>
+        <docker.publish.username></docker.publish.username>
+        <docker.publish.password></docker.publish.password>
     </properties>
     <dependencies>
         <dependency>
@@ -114,7 +120,17 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <imageName>admiralduck/${project.artifactId}:${project.version}</imageName>
+                    <image>
+                        <name>ghcr.io/martin-schaefer/${project.artifactId}:${image.tag}</name>
+                        <publish>${image.publish}</publish>
+                    </image>
+                    <docker>
+                        <publishRegistry>
+                            <url>https://ghcr.io</url>
+                            <username>${docker.publish.username}</username>
+                            <password>${docker.publish.password}</password>
+                        </publishRegistry>
+                    </docker>
                     <excludes>
                         <exclude>
                             <groupId>org.projectlombok</groupId>
