@@ -123,6 +123,11 @@
                     <image>
                         <name>ghcr.io/martin-schaefer/${project.artifactId}:${image.tag}</name>
                         <publish>${image.publish}</publish>
+                        <!-- Spring Boot 3.1.4 defaults to the deprecated, Bionic-based
+                             paketobuildpacks/builder:tiny, whose stale CA bundle fails to
+                             verify download.bell-sw.com's current cert chain. Pin the
+                             maintained Jammy-based successor instead. -->
+                        <builder>paketobuildpacks/builder-jammy-tiny</builder>
                     </image>
                     <docker>
                         <publishRegistry>
