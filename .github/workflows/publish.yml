@@ -1,0 +1,39 @@
+name: Publish image to GHCR
+
+on:
+  push:
+    tags:
+      - '[0-9]+.[0-9]+.[0-9]+'
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: maven
+
+      # Cloud Native Buildpacks build the native image inside its own builder container via
+      # Docker (already running on GitHub-hosted runners) - no local GraalVM install needed here.
+      #
+      # The image tag comes from the git tag, not pom.xml's <version>, so tagging a release is
+      # enough regardless of whether the Maven version was bumped to match.
+      #
+      # Buildpacks' own registry-publish step has its own credential config (docker.publishRegistry
+      # in pom.xml) - it does not read the Docker CLI's credential store, so there's no separate
+      # `docker login` step here.
+      - name: Build and publish native image
+        run: |
+          ./mvnw -B -Pnative spring-boot:build-image \
+            -Dimage.tag=${{ github.ref_name }} \
+            -Dimage.publish=true \
+            -Ddocker.publish.username=${{ github.actor }} \
+            -Ddocker.publish.password=${{ secrets.GITHUB_TOKEN }}
