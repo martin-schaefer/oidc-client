@@ -30,9 +30,13 @@ jobs:
       # Buildpacks' own registry-publish step has its own credential config (docker.publishRegistry
       # in pom.xml) - it does not read the Docker CLI's credential store, so there's no separate
       # `docker login` step here.
+      #
+      # Tests are skipped here on purpose: OidcContainerTest spins up Keycloak + Selenium +
+      # this app via Testcontainers and belongs in a regular CI/PR validation workflow, not
+      # gating every tagged release build.
       - name: Build and publish native image
         run: |
-          bash mvnw -B -Pnative spring-boot:build-image \
+          bash mvnw -B -Pnative spring-boot:build-image -DskipTests \
             -Dimage.tag=${{ github.ref_name }} \
             -Dimage.publish=true \
             -Ddocker.publish.username=${{ github.actor }} \
