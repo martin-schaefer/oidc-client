@@ -23,7 +23,12 @@ public class OidcRestController {
         OidcIdToken idToken = oidcUser.getIdToken();
         model.addAttribute(PREFERRED_USERNAME, idToken.getPreferredUsername());
         model.addAttribute(CLAIMS, new TreeMap<>(idToken.getClaims()).entrySet().stream().map(KeyValue::of).toList());
-        model.addAttribute(INFOS, new TreeMap<>(oidcUser.getUserInfo().getClaims()).entrySet().stream().map(KeyValue::of).toList());
+        // The UserInfo endpoint call is optional per the OIDC spec - getUserInfo() is legitimately
+        // null when it wasn't invoked (e.g. the ID token already carried the requested claims).
+        Map<String, Object> userInfoClaims = oidcUser.getUserInfo() != null
+                ? oidcUser.getUserInfo().getClaims()
+                : Map.of();
+        model.addAttribute(INFOS, new TreeMap<>(userInfoClaims).entrySet().stream().map(KeyValue::of).toList());
         return CLAIMS;
     }
 }
